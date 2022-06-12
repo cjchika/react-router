@@ -2,13 +2,9 @@ import { useEffect } from "react";
 
 import QuoteList from "../components/quotes/QuoteList";
 import LoadingSpinner from "../components/UI/LoadingSpinner";
+import NoQuotesFound from '../components/quotes/NoQuotesFound'
 import useHttp from "../hooks/use-http";
 import { getAllQuotes } from "../lib/api";
-
-const SUB_QUOTES = [
-	{ id: 'q1', author: "Mandela", text: 'It always seems impossible until its done.' },
-	{ id: 'q2', author: "Azikiwe", text: 'No matter how old an individual may be, no matter if he is young or old, if he thinks in accordance with the times he is immortal' }
-];
 
 const AllQuotes = () => {
 	const { sendRequest, status, data: loadedQuotes, error } = useHttp(getAllQuotes, true)
@@ -25,7 +21,15 @@ const AllQuotes = () => {
 		)
 	}
 
-  return <QuoteList quotes={SUB_QUOTES}/>
+	if(error) {
+		return <p className="centered focused">{error}</p>
+	}
+
+	if(status === 'completed' && (!loadedQuotes || loadedQuotes.length === 0)) {
+		return <NoQuotesFound />
+	}
+
+  return <QuoteList quotes={loadedQuotes}/>
 };
 
 export default AllQuotes;
